@@ -43,9 +43,11 @@
     <script>
       require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/ScaleBar",
         "esri/widgets/Legend", "esri/widgets/Search", "esri/widgets/Home", "esri/widgets/LayerList",
-        "esri/widgets/Compass", "esri/widgets/Locate", "esri/widgets/BasemapGallery"
+        "esri/widgets/Compass", "esri/widgets/Locate", "esri/widgets/BasemapGallery",
+        "esri/widgets/AreaMeasurement2D","esri/widgets/Expand","esri/widgets/Sketch","esri/layers/GraphicsLayer"
+
         ],
-      (Map, MapView, FeatureLayer, ScaleBar, Legend, Search, Home, LayerList, Compass, Locate, BasemapGallery) => {
+      (Map, MapView, FeatureLayer, ScaleBar, Legend, Search, Home, LayerList, Compass, Locate, BasemapGallery,AreaMeasurement2D, Expand, Sketch, GraphicsLayer) => {
         //添加要素图层
         const flayer = new FeatureLayer({
             url: "https://www.geosceneonline.cn/server/rest/services/Hosted/全国各省人口自然增长率/FeatureServer"
@@ -122,6 +124,32 @@
 				  }}
         });
         view.ui.add(gallery, "top-right");
+        //添加计算工具
+        const areaMeasurementWidget = new AreaMeasurement2D({
+          view: view,
+          unit: "square-kilometers"
+        });
+
+        const expand = new Expand({
+          view: view,
+          content: areaMeasurementWidget,
+          expandIconClass: "esri-icon-measure-area",
+          group: "analysis"
+        });
+
+        view.ui.add(expand, {
+        position: "top-left",       //位于左上
+        index: 1
+      });
+       //sketch
+       view.when(() => {
+        const sketch = new Sketch({
+          view: view,
+          // graphic will be selected as soon as it is created
+          creationMode: "update"
+        });
+        view.ui.add(sketch, "top-right");
+      })
       });
     </script>
   </head>
